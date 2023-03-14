@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.develop.mapper.MedicineHelperMapper">
+    
+    <resultMap type="MedicineHelper" id="MedicineHelperResult">
+        <result property="id"    column="id"    />
+        <result property="helperName"    column="helper_name"    />
+        <result property="wechatNum"    column="wechat_num"    />
+        <result property="phone"    column="phone"    />
+        <result property="medicineName"    column="medicine_name"    />
+        <result property="address"    column="address"    />
+        <result property="status"    column="status"    />
+        <result property="message"    column="message"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="helperId"    column="helper_id"    />
+        <result property="medicineSource"    column="medicine_source"    />
+        <result property="medicineImages"    column="medicine_images"    />
+        <result property="type"    column="type"    />
+        <result property="longitude"    column="longitude"    />
+        <result property="latitude"    column="latitude"    />
+    </resultMap>
+
+    <sql id="selectMedicineHelperVo">
+        select id, helper_name, wechat_num, phone, medicine_name, address, status, message, create_time, update_time, helper_id, medicine_source, medicine_images, type, longitude, latitude from medicine_helper
+    </sql>
+
+    <select id="selectMedicineHelperList" parameterType="MedicineHelper" resultMap="MedicineHelperResult">
+        <include refid="selectMedicineHelperVo"/>
+        <where>
+            and type = 'HELP'
+            <if test="medicineName != null  and medicineName != ''"> and medicine_name like concat(concat('%', #{medicineName}), '%')</if>
+            <if test="status != null  and status != ''"> and status = #{status}</if>
+            <if test="params.beginCreateTime != null and params.beginCreateTime != '' and params.endCreateTime != null and params.endCreateTime != ''"> and create_time between to_timestamp(#{params.beginCreateTime},'yyyy-MM-dd') and to_timestamp(#{params.endCreateTime},'yyyy-MM-dd')</if>
+        </where>
+    </select>
+
+    <select id="selectMedicineSeekerList" parameterType="MedicineHelper" resultMap="MedicineHelperResult">
+        <include refid="selectMedicineHelperVo"/>
+        <where>
+            and type = 'SEEK'
+            <if test="medicineName != null  and medicineName != ''"> and medicine_name like concat(concat('%', #{medicineName}), '%')</if>
+            <if test="status != null  and status != ''"> and status = #{status}</if>
+            <if test="params.beginCreateTime != null and params.beginCreateTime != '' and params.endCreateTime != null and params.endCreateTime != ''"> and create_time between to_timestamp(#{params.beginCreateTime},'yyyy-MM-dd') and to_timestamp(#{params.endCreateTime},'yyyy-MM-dd')</if>
+        </where>
+    </select>
+    
+    <select id="selectMedicineHelperById" parameterType="String" resultMap="MedicineHelperResult">
+        <include refid="selectMedicineHelperVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertMedicineHelper" parameterType="MedicineHelper">
+        <selectKey keyProperty="id" resultType="long" order="BEFORE">
+            SELECT seq_medicine_helper.NEXTVAL as id FROM DUAL
+        </selectKey>
+        insert into medicine_helper
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null  and id != ''">id,</if>
+            <if test="helperName != null  and helperName != ''">helper_name,</if>
+            <if test="wechatNum != null  and wechatNum != ''">wechat_num,</if>
+            <if test="phone != null  and phone != ''">phone,</if>
+            <if test="medicineName != null  and medicineName != ''">medicine_name,</if>
+            <if test="address != null  and address != ''">address,</if>
+            <if test="status != null  and status != ''">status,</if>
+            <if test="message != null  and message != ''">message,</if>
+            <if test="createTime != null ">create_time,</if>
+            <if test="updateTime != null ">update_time,</if>
+            <if test="helperId != null  and helperId != ''">helper_id,</if>
+            <if test="medicineSource != null  and medicineSource != ''">medicine_source,</if>
+            <if test="medicineImages != null  and medicineImages != ''">medicine_images,</if>
+            <if test="type != null  and type != ''">type,</if>
+            <if test="longitude != null  and longitude != ''">longitude,</if>
+            <if test="latitude != null  and latitude != ''">latitude,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null  and id != ''">#{id},</if>
+            <if test="helperName != null  and helperName != ''">#{helperName},</if>
+            <if test="wechatNum != null  and wechatNum != ''">#{wechatNum},</if>
+            <if test="phone != null  and phone != ''">#{phone},</if>
+            <if test="medicineName != null  and medicineName != ''">#{medicineName},</if>
+            <if test="address != null  and address != ''">#{address},</if>
+            <if test="status != null  and status != ''">#{status},</if>
+            <if test="message != null  and message != ''">#{message},</if>
+            <if test="createTime != null ">#{createTime},</if>
+            <if test="updateTime != null ">#{updateTime},</if>
+            <if test="helperId != null  and helperId != ''">#{helperId},</if>
+            <if test="medicineSource != null  and medicineSource != ''">#{medicineSource},</if>
+            <if test="medicineImages != null  and medicineImages != ''">#{medicineImages},</if>
+            <if test="type != null  and type != ''">#{type},</if>
+            <if test="longitude != null  and longitude != ''">#{longitude},</if>
+            <if test="latitude != null  and latitude != ''">#{latitude},</if>
+         </trim>
+    </insert>
+
+    <update id="updateMedicineHelper" parameterType="MedicineHelper">
+        update medicine_helper
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="helperName != null  and helperName != ''">helper_name = #{helperName},</if>
+            <if test="wechatNum != null  and wechatNum != ''">wechat_num = #{wechatNum},</if>
+            <if test="phone != null  and phone != ''">phone = #{phone},</if>
+            <if test="medicineName != null  and medicineName != ''">medicine_name = #{medicineName},</if>
+            <if test="address != null  and address != ''">address = #{address},</if>
+            <if test="status != null  and status != ''">status = #{status},</if>
+            <if test="message != null  and message != ''">message = #{message},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="updateTime != null ">update_time = #{updateTime},</if>
+            <if test="helperId != null  and helperId != ''">helper_id = #{helperId},</if>
+            <if test="medicineSource != null  and medicineSource != ''">medicine_source = #{medicineSource},</if>
+            <if test="medicineImages != null  and medicineImages != ''">medicine_images = #{medicineImages},</if>
+            <if test="type != null  and type != ''">type = #{type},</if>
+            <if test="longitude != null  and longitude != ''">longitude = #{longitude},</if>
+            <if test="latitude != null  and latitude != ''">latitude = #{latitude},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteMedicineHelperById" parameterType="String">
+        delete from medicine_helper where id = #{id}
+    </delete>
+
+    <delete id="deleteMedicineHelperByIds" parameterType="String">
+        delete from medicine_helper where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+</mapper>

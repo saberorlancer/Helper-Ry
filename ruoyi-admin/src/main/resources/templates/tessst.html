@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html  lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:include="include :: header('用户列表')" />
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!--360浏览器优先以webkit内核解析-->
+    <title>若依介绍</title>
+    <link rel="shortcut icon" href="favicon.ico">
+    <link href="../static/css/bootstrap.min.css" th:href="@{/css/bootstrap.min.css}" rel="stylesheet"/>
+    <link href="../static/css/font-awesome.min.css" th:href="@{/css/font-awesome.min.css}" rel="stylesheet"/>
+    <link href="../static/css/main/animate.min.css" th:href="@{/css/main/animate.min.css}" rel="stylesheet"/>
+    <link href="../static/css/main/style.min862f.css" th:href="@{/css/main/style.min862f.css}" rel="stylesheet"/>
+</head>
+
+<body class="gray-bg">
+<div class="container-div" style="height: 20%">
+    <div class="row">
+        <div class="col-sm-12 search-collapse">
+            <form id="formId">
+                <div class="select-list">
+                    <ul>
+                        <li class="select-time">
+                            <p>注册时间：</p>
+                            <input type="text" class="time-input" id="startTime" placeholder="开始时间" name="params[beginCreateTime]"/>
+                            <span>-</span>
+                            <input type="text" class="time-input" id="endTime" placeholder="结束时间" name="params[endCreateTime]"/>
+                        </li>
+                        <li>
+                            <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                            <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+                        </li>
+                    </ul>
+                </div>
+            </form>
+        </div>
+
+        <div class="btn-group-sm" id="toolbar" role="group">
+            <a class="btn btn-success" onclick="$.operate.add()" shiro:hasPermission="user:user:add">
+                <i class="fa fa-plus"></i> 添加
+            </a>
+            <a class="btn btn-primary single disabled" onclick="$.operate.edit()" shiro:hasPermission="user:user:edit">
+                <i class="fa fa-edit"></i> 修改
+            </a>
+            <a class="btn btn-danger multiple disabled" onclick="$.operate.removeAll()" shiro:hasPermission="user:user:remove">
+                <i class="fa fa-remove"></i> 删除
+            </a>
+            <a class="btn btn-warning" onclick="$.table.exportExcel()" shiro:hasPermission="user:user:export">
+                <i class="fa fa-download"></i> 导出
+            </a>
+        </div>
+        <div class="col-sm-12 select-table table-striped">
+            <table id="bootstrap-table"></table>
+        </div>
+    </div>
+</div>
+<div id="container" style="height: 60%"></div>
+<th:block th:include="include :: footer" />
+
+<script type="text/javascript" src="https://fastly.jsdelivr.net/npm/echarts@5.4.1/dist/echarts.min.js"></script>
+	<script th:src="@{/js/echarts.min.js}"></script>
+    <script th:src="@{/js/jquery.min.js}"></script>
+    <script th:src="@{/js/bootstrap.min.js}"></script>
+    <script th:src="@{/ajax/libs/layer/layer.min.js}"></script>
+    <script type="text/javascript">
+
+
+		var dom = document.getElementById('container');
+		var myChart = echarts.init(dom, null, {
+			renderer: 'canvas',
+			useDirtyRect: false
+		});
+		var app = {};
+
+		var option;
+
+		option = {
+			title: {
+				text: '对比上一个时间节点'
+			},
+			tooltip: {
+				trigger: 'axis'
+			},
+			legend: {},
+			toolbox: {
+				show: true,
+				feature: {
+					dataZoom: {
+						yAxisIndex: 'none'
+					},
+					dataView: { readOnly: false },
+					magicType: { type: ['line', 'bar'] },
+					restore: {},
+					saveAsImage: {}
+				}
+			},
+			xAxis: {
+				type: 'category',
+				boundaryGap: false,
+				data: ['1月', '2月', '3月', '4月', '5月', '6月', '7月']
+			},
+			yAxis: {
+				type: 'value',
+				axisLabel: {
+					formatter: '{value}'
+				}
+			},
+			series: [
+				{
+					name: 'Highest',
+					type: 'line',
+					data: [10, 11, 13, 11, 12, 12, 9],
+					markPoint: {
+						data: [
+							{ type: 'max', name: 'Max' },
+							{ type: 'min', name: 'Min' }
+						]
+					},
+					markLine: {
+						data: [{ type: 'average', name: 'Avg' }]
+					}
+				},
+				{
+					name: 'Lowest',
+					type: 'line',
+					data: [1, -2, 2, 5, 3, 2, 0],
+					markPoint: {
+						data: [{ name: '周最低', value: -2, xAxis: 1, yAxis: -1.5 }]
+					},
+					markLine: {
+						data: [
+							{ type: 'average', name: 'Avg' },
+							[
+								{
+									symbol: 'none',
+									x: '90%',
+									yAxis: 'max'
+								},
+								{
+									symbol: 'circle',
+									label: {
+										position: 'start',
+										formatter: 'Max'
+									},
+									type: 'max',
+									name: '最高点'
+								}
+							]
+						]
+					}
+				}
+			]
+		};
+		function check(){
+            $.ajax({
+                type:"get",
+
+                url:"/testsss/data",
+
+                dataType:"json",
+
+                success: function(data){
+                    option.xAxis.data = data;
+                }
+
+            });
+
+            myChart.setOption(option);
+        }
+
+
+		if (option && typeof option === 'object') {
+			myChart.setOption(option);
+		}
+
+		window.addEventListener('resize', myChart.resize);
+    </script>
+</body>
+</html>

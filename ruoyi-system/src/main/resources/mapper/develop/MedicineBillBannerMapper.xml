@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.develop.mapper.MedicineBillBannerMapper">
+    
+    <resultMap type="MedicineBillBanner" id="MedicineBillBannerResult">
+        <result property="id"    column="id"    />
+        <result property="fileName"    column="file_name"    />
+        <result property="fileType"    column="file_type"    />
+        <result property="filePath"    column="file_path"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="uploader"    column="uploader"    />
+        <result property="status"    column="status"    />
+    </resultMap>
+
+    <sql id="selectMedicineBillBannerVo">
+        select id, file_name, file_type, file_path, create_time, update_time, uploader, status from medicine_bill_banner
+    </sql>
+
+    <select id="selectMedicineBillBannerList" parameterType="MedicineBillBanner" resultMap="MedicineBillBannerResult">
+        <include refid="selectMedicineBillBannerVo"/>
+        <where>  
+        </where>
+    </select>
+    
+    <select id="selectMedicineBillBannerById" parameterType="String" resultMap="MedicineBillBannerResult">
+        <include refid="selectMedicineBillBannerVo"/>
+        where id = #{id}
+    </select>
+
+    <select id="getBanner" parameterType="MedicineBillBanner" resultMap="MedicineBillBannerResult">
+        <include refid="selectMedicineBillBannerVo"/>
+        where status = 'YES' and FILE_TYPE = 'BANNER'
+    </select>
+
+    <select id="getBill" parameterType="MedicineBillBanner" resultMap="MedicineBillBannerResult">
+        <include refid="selectMedicineBillBannerVo"/>
+        where status = 'YES' and FILE_TYPE = 'BILL'
+    </select>
+        
+    <insert id="insertMedicineBillBanner" parameterType="MedicineBillBanner">
+        insert into medicine_bill_banner
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null  and id != ''">id,</if>
+            <if test="fileName != null  and fileName != ''">file_name,</if>
+            <if test="fileType != null  and fileType != ''">file_type,</if>
+            <if test="filePath != null  and filePath != ''">file_path,</if>
+            <if test="createTime != null ">create_time,</if>
+            <if test="updateTime != null ">update_time,</if>
+            <if test="uploader != null  and uploader != ''">uploader,</if>
+            <if test="status != null  and status != ''">status,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null  and id != ''">#{id},</if>
+            <if test="fileName != null  and fileName != ''">#{fileName},</if>
+            <if test="fileType != null  and fileType != ''">#{fileType},</if>
+            <if test="filePath != null  and filePath != ''">#{filePath},</if>
+            <if test="createTime != null ">#{createTime},</if>
+            <if test="updateTime != null ">#{updateTime},</if>
+            <if test="uploader != null  and uploader != ''">#{uploader},</if>
+            <if test="status != null  and status != ''">#{status},</if>
+         </trim>
+    </insert>
+
+    <update id="updateMedicineBillBanner" parameterType="MedicineBillBanner">
+        update medicine_bill_banner
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="fileName != null  and fileName != ''">file_name = #{fileName},</if>
+            <if test="fileType != null  and fileType != ''">file_type = #{fileType},</if>
+            <if test="filePath != null  and filePath != ''">file_path = #{filePath},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="updateTime != null ">update_time = #{updateTime},</if>
+            <if test="uploader != null  and uploader != ''">uploader = #{uploader},</if>
+            <if test="status != null  and status != ''">status = #{status},</if>
+        </trim>
+        where FILE_TYPE = #{fileType}
+    </update>
+
+    <delete id="deleteMedicineBillBannerById" parameterType="String">
+        delete from medicine_bill_banner where id = #{id}
+    </delete>
+
+    <delete id="deleteMedicineBillBannerByIds" parameterType="String">
+        delete from medicine_bill_banner where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+</mapper>

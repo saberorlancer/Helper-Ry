@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.develop.mapper.GkWxUserMapper">
+    
+    <resultMap type="GkWxUser" id="GkWxUserResult">
+        <result property="openId"    column="open_id"    />
+        <result property="sessionKey"    column="session_key"    />
+        <result property="avatarUrl"    column="avatar_url"    />
+        <result property="city"    column="city"    />
+        <result property="country"    column="country"    />
+        <result property="gender"    column="gender"    />
+        <result property="language"    column="language"    />
+        <result property="nickName"    column="nick_name"    />
+        <result property="realName"    column="real_name"    />
+        <result property="province"    column="province"    />
+        <result property="stuId"    column="stu_id"    />
+        <result property="phone"    column="phone"    />
+        <result property="id"    column="id"    />
+        <result property="wechatNum"    column="wechat_num"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectGkWxUserVo">
+        select open_id, session_key, avatar_url, city, country, gender, language, nick_name, real_name, province, stu_id, phone, id, wechat_num, create_time, update_time from gk_wx_user
+    </sql>
+
+    <select id="selectGkWxUserList" parameterType="GkWxUser" resultMap="GkWxUserResult">
+        <include refid="selectGkWxUserVo"/>
+        <where>  
+            <if test="params.beginCreateTime != null and params.beginCreateTime != '' and params.endCreateTime != null and params.endCreateTime != ''"> and create_time between to_timestamp(#{params.beginCreateTime},'yyyy-MM-dd') and to_timestamp(#{params.endCreateTime},'yyyy-MM-dd')</if>
+        </where>
+    </select>
+    
+    <select id="selectGkWxUserById" parameterType="String" resultMap="GkWxUserResult">
+        <include refid="selectGkWxUserVo"/>
+        where open_id = #{openId}
+    </select>
+        
+    <insert id="insertGkWxUser" parameterType="GkWxUser">
+        <selectKey keyProperty="openId" resultType="long" order="BEFORE">
+            SELECT seq_gk_wx_user.NEXTVAL as openId FROM DUAL
+        </selectKey>
+        insert into gk_wx_user
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="openId != null  and openId != ''">open_id,</if>
+            <if test="sessionKey != null  and sessionKey != ''">session_key,</if>
+            <if test="avatarUrl != null  and avatarUrl != ''">avatar_url,</if>
+            <if test="city != null  and city != ''">city,</if>
+            <if test="country != null  and country != ''">country,</if>
+            <if test="gender != null  and gender != ''">gender,</if>
+            <if test="language != null  and language != ''">language,</if>
+            <if test="nickName != null  and nickName != ''">nick_name,</if>
+            <if test="realName != null  and realName != ''">real_name,</if>
+            <if test="province != null  and province != ''">province,</if>
+            <if test="stuId != null ">stu_id,</if>
+            <if test="phone != null  and phone != ''">phone,</if>
+            <if test="id != null  and id != ''">id,</if>
+            <if test="wechatNum != null  and wechatNum != ''">wechat_num,</if>
+            <if test="createTime != null ">create_time,</if>
+            <if test="updateTime != null ">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="openId != null  and openId != ''">#{openId},</if>
+            <if test="sessionKey != null  and sessionKey != ''">#{sessionKey},</if>
+            <if test="avatarUrl != null  and avatarUrl != ''">#{avatarUrl},</if>
+            <if test="city != null  and city != ''">#{city},</if>
+            <if test="country != null  and country != ''">#{country},</if>
+            <if test="gender != null  and gender != ''">#{gender},</if>
+            <if test="language != null  and language != ''">#{language},</if>
+            <if test="nickName != null  and nickName != ''">#{nickName},</if>
+            <if test="realName != null  and realName != ''">#{realName},</if>
+            <if test="province != null  and province != ''">#{province},</if>
+            <if test="stuId != null ">#{stuId},</if>
+            <if test="phone != null  and phone != ''">#{phone},</if>
+            <if test="id != null  and id != ''">#{id},</if>
+            <if test="wechatNum != null  and wechatNum != ''">#{wechatNum},</if>
+            <if test="createTime != null ">#{createTime},</if>
+            <if test="updateTime != null ">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateGkWxUser" parameterType="GkWxUser">
+        update gk_wx_user
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="sessionKey != null  and sessionKey != ''">session_key = #{sessionKey},</if>
+            <if test="avatarUrl != null  and avatarUrl != ''">avatar_url = #{avatarUrl},</if>
+            <if test="city != null  and city != ''">city = #{city},</if>
+            <if test="country != null  and country != ''">country = #{country},</if>
+            <if test="gender != null  and gender != ''">gender = #{gender},</if>
+            <if test="language != null  and language != ''">language = #{language},</if>
+            <if test="nickName != null  and nickName != ''">nick_name = #{nickName},</if>
+            <if test="realName != null  and realName != ''">real_name = #{realName},</if>
+            <if test="province != null  and province != ''">province = #{province},</if>
+            <if test="stuId != null ">stu_id = #{stuId},</if>
+            <if test="phone != null  and phone != ''">phone = #{phone},</if>
+            <if test="id != null  and id != ''">id = #{id},</if>
+            <if test="wechatNum != null  and wechatNum != ''">wechat_num = #{wechatNum},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="updateTime != null ">update_time = #{updateTime},</if>
+        </trim>
+        where open_id = #{openId}
+    </update>
+
+    <delete id="deleteGkWxUserById" parameterType="String">
+        delete from gk_wx_user where open_id = #{openId}
+    </delete>
+
+
+
+    <delete id="deleteGkWxUserByIds" parameterType="String">
+        delete from gk_wx_user where open_id in 
+        <foreach item="openId" collection="array" open="(" separator="," close=")">
+            #{openId}
+        </foreach>
+    </delete>
+    
+</mapper>

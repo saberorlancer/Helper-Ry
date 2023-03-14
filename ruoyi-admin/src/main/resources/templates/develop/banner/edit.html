@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="include :: header('修改海报与Banner信息')" />
+</head>
+<body class="white-bg">
+    <div class="wrapper wrapper-content animated fadeInRight ibox-content">
+        <form class="form-horizontal m" id="form-banner-edit">
+            <input name="id" type="hidden">
+            <div class="form-group">
+                <label class="col-sm-4 control-label">                                       </label>
+                <div class="col-sm-8" style="align-items: center">
+                    <img id = "imgs" src="http://192.168.110.121:8081//5e3dc3332a544ab77f906b9ef80c457.jpg"/>
+
+                </div>
+                <div class="container-div" style="height:20%">
+                    <div class="row">
+                        <div class="col-sm-12 search-collapse">
+                            <form id="formId">
+                                <div class="select-list">
+                                    <ul>
+                                        <li>
+                                            <a id = "test" class="btn btn-warning btn-rounded btn-sm" style="margin-left: 510px" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;上传</a>
+                                            <a id = "update" class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;提交</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <input style="display:none" type="file" id="files1" multiple onchange ="imgUpload()" size="mini">
+        </form>
+    </div>
+    <th:block th:include="include :: footer" />
+    <script type="text/javascript">
+        var prefix = ctx + "develop/banner";
+        $("#form-banner-edit").validate({
+            focusCleanup: true
+        });
+
+        function submitHandler() {
+            if ($.validate.form()) {
+                $.operate.save(prefix + "/edit", $('#form-banner-edit').serialize());
+            }
+        }
+
+
+        // 图片处理
+        function imgUpload() {
+            let data = $("#files1").get(0).files[0];
+            if(data.type == 'image/png') {
+                var reader = new FileReader();
+                reader.readAsDataURL(data);
+                reader.onload = function (theFile) {
+                    var image = new Image();
+                    image.src = theFile.target.result;
+                    image.onload = function () {
+                        if (this.width != 750 || this.height != 424) {
+                            alert("图片的宽度为" + this.width + ",长度为" + this.height + "应为 750*424 格式");
+                        } else {
+                            upload(data)
+                        }
+                    };
+                };
+            }else{
+                alert("必须是png格式")
+            }
+
+        }
+
+
+        async function upload(data) {
+            let formData = new FormData();
+            formData.append("file", data);
+            const url = `http://192.168.110.121/develop/banner/uploadImage`;
+            const config = {
+                method: 'POST',
+                body: formData
+            }
+            const req = new Request(url, config);
+            //响应对象是一个pormise
+            let res = await fetch(req);
+            res.json().then((result) =>{
+                console.log(result[0])
+                //$('#imgs').src = result[0];
+                document.getElementById('imgs').src = result[0];
+            })
+            return null;
+        }
+
+
+
+
+        //通过点击图片来触发文件上传按钮
+        $("#update").click(() => {
+            $.ajax({
+                type:"post",
+
+                url:"/develop/banner/commit",
+
+                dataType:"json",
+
+                data:{
+                    url: document.getElementById('imgs').src
+                },
+
+                success: function(){
+                    console.log(12345);
+                }
+
+            });
+        })
+
+        $("#test").click(() => {
+
+            $("#files1").click();
+        });
+
+
+        $(function () {
+            $.ajax({
+                type:"get",
+
+                url:"/develop/banner/getBanner",
+
+                dataType:"json",
+
+                data:{
+                    url: document.getElementById('imgs').src
+                },
+
+                success: function(data){
+                    document.getElementById('imgs').src = data.filePath
+                }
+
+            });
+        })
+    </script>
+</body>
+</html>
